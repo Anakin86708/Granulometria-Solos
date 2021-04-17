@@ -94,71 +94,38 @@ def calcular_peneiramento_fino(ms, m1, m2, m3, m4, m5, m6, m7, m8):
     print(dados)
 
     # Criando Plot de Gráfico
-    x = [1.18, 0.59, 0.42, 0.30, 0.21, 0.15, 0.074, 0]
-    y = passa_acum
+    x = np.array(sorted([1.18, 0.59, 0.42, 0.30, 0.21, 0.15, 0.074, 0]))
+    y = np.array(sorted(passa_acum))
+
+    x_new = np.linspace(min(x), max(x), 40)
+
+    spl = make_interp_spline(x, y, k=2)
+    y_new = spl(x_new)
 
     fig, ax = plt.subplots()
-    ax.plot(x, y, label='amostra 1')
+    ax.plot(x_new, y_new, label='amostra 1')
     ax.set_xlabel('Diâmetros(mm)', fontsize=10, verticalalignment='bottom')
     ax.set_xscale('log')
     ax.set_ylabel('% que passa', fontsize=10, verticalalignment='bottom')
-    ax.axvline(1.18, 0, 1, color='brown', zorder=-10, linestyle="--", linewidth=0.5)
-    ax.axvline(0.59, 0, 1, color='brown', zorder=-10, linestyle="--", linewidth=0.5)
-    ax.axvline(0.42, 0, 1, color='brown', zorder=-10, linestyle="--", linewidth=0.5)
-    ax.axvline(0.30, 0, 1, color='brown', zorder=-10, linestyle="--", linewidth=0.5)
-    ax.axvline(0.21, 0, 1, color='brown', zorder=-10, linestyle="--", linewidth=0.5)
-    ax.axvline(0.15, 0, 1, color='brown', zorder=-10, linestyle="--", linewidth=0.5)
-    ax.axvline(0.074, 0, 1, color='brown', zorder=-10, linestyle="--", linewidth=0.5)
+
+    line_dashed(ax, 1.18)
+    line_dashed(ax, 0.59)
+    line_dashed(ax, 0.42)
+    line_dashed(ax, 0.30)
+    line_dashed(ax, 0.21)
+    line_dashed(ax, 0.15)
+    line_dashed(ax, 0.074)
+
     ax.grid(linestyle=":", linewidth=0.5, color='.25', zorder=-10)
-    ax.annotate('Granulometria',
-            xy=(1, 0), xycoords='axes fraction',
-            color='black',
-            xytext=(-95, 230), textcoords='offset pixels',
-            horizontalalignment='right',
-            verticalalignment='bottom',
-            size=20 )
-    ax.annotate('#16',
-            xy=(1, 0), xycoords='axes fraction',
-            xytext=(-6, 220), textcoords='offset pixels',
-            horizontalalignment='right',
-            verticalalignment='bottom',
-            size=8 )
-    ax.annotate('#30',
-            xy=(1, 0), xycoords='axes fraction',
-            xytext=(-85, 220), textcoords='offset pixels',
-            horizontalalignment='right',
-            verticalalignment='bottom',
-            size=8 )
-    ax.annotate('#40',
-            xy=(1, 0), xycoords='axes fraction',
-            xytext=(-120, 220), textcoords='offset pixels',
-            horizontalalignment='right',
-            verticalalignment='bottom',
-            size=8 )
-    ax.annotate('#50',
-            xy=(1, 0), xycoords='axes fraction',
-            xytext=(-157, 220), textcoords='offset pixels',
-            horizontalalignment='right',
-            verticalalignment='bottom',
-            size=8 )
-    ax.annotate('#70',
-            xy=(1, 0), xycoords='axes fraction',
-            xytext=(-195, 220), textcoords='offset pixels',
-            horizontalalignment='right',
-            verticalalignment='bottom',
-            size=8 )
-    ax.annotate('#100',
-            xy=(1, 0), xycoords='axes fraction',
-            xytext=(-230, 220), textcoords='offset pixels',
-            horizontalalignment='right',
-            verticalalignment='bottom',
-            size=8 )
-    ax.annotate('#200',
-            xy=(1, 0), xycoords='axes fraction',
-            xytext=(-312, 220), textcoords='offset pixels',
-            horizontalalignment='right',
-            verticalalignment='bottom',
-            size=8 )
+
+    annotate_on_top(ax, 'Granulometria', (-95, 230), size=20)
+    annotate_on_top(ax, '#16', (-6, 220))
+    annotate_on_top(ax, '#30', (-85, 220))
+    annotate_on_top(ax, '#40', (-120, 220))
+    annotate_on_top(ax, '#50', (-157, 220))
+    annotate_on_top(ax, '#70', (-195, 220))
+    annotate_on_top(ax, '#100', (-230, 220))
+    annotate_on_top(ax, '#200', (-312, 220))
 
     plt.legend()
     plt.show()
@@ -166,8 +133,29 @@ def calcular_peneiramento_fino(ms, m1, m2, m3, m4, m5, m6, m7, m8):
 
 # %%
 
+def line_dashed(ax, x):
+    ax.axvline(
+        x,
+        0, 1, color='brown', zorder=-
+        10, linestyle="--", linewidth=0.5
+    )
+
+
+def annotate_on_top(ax, text, xytext, size=8):
+    ax.annotate(
+        text,
+        xy=(1, 0), xycoords='axes fraction',
+        xytext=xytext, textcoords='offset pixels',
+        horizontalalignment='right',
+        verticalalignment='bottom',
+        size=size
+    )
+
+# %%
+
+
 def main():
-    
+
     # a = int(input('teste'))
     a = 2
 
@@ -209,14 +197,14 @@ def main():
         massa_retida_prato = 0.57
 
         calcular_peneiramento_fino(
-            massa_solidos, 
-            massa_retida_peneira_16, 
-            massa_retida_peneira_30, 
-            massa_retida_peneira_40, 
-            massa_retida_peneira_50, 
-            massa_retida_peneira_70, 
-            massa_retida_peneira_100, 
-            massa_retida_peneira_200, 
+            massa_solidos,
+            massa_retida_peneira_16,
+            massa_retida_peneira_30,
+            massa_retida_peneira_40,
+            massa_retida_peneira_50,
+            massa_retida_peneira_70,
+            massa_retida_peneira_100,
+            massa_retida_peneira_200,
             massa_retida_prato
         )
 
